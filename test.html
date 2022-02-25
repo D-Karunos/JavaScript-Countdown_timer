@@ -1,0 +1,154 @@
+{{ '//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css' | stylesheet_tag }}
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" defer="defer"></script>
+
+<div style="width:300px; clear:both;">
+  <p>
+    <label for="date">Pick a pre-order date:</label>
+    <input required id="date" type="text" placeholder = "Delivery Date" name="attributes[date]" style="font-style:italic" value="{{ cart.attributes.date }}" onkeypress="return false;"/>
+  </p>
+</div>
+
+
+<!--MY STYLE SCRIPT-->
+<style>
+  
+
+  .ui-widget-header {
+      background: #94a68a;
+  }
+
+  .ui-widget-content {
+      background: #ffffff;
+  }
+
+  .center{
+      position: absolute;
+      width: 300px;
+      height: 200px;
+      z-index: 15;
+      top: 50%;
+      left: 50%;
+      margin: -100px 0 0 -150px;
+  }
+  .disabled span{
+      color:black !important;
+      background:white !important;
+  }
+  .enabled a{
+      color:black !important;
+      background:white !important;
+  }
+  .enabled a:hover{
+      color:white !important;
+      background: #94a68a !important;
+  }
+  input {
+      text-align: center;
+        border: 1px solid;
+        font-family: brandon-grotesque;
+        
+  }
+    input::placeholder {
+        color: black;
+        opacity: 1; /* Firefox */
+  }
+
+  :-ms-input-placeholder { /* Internet Explorer 10-11 */
+   color: black;
+  }
+
+  ::-ms-input-placeholder { /* Microsoft Edge */
+   color: black;
+  }
+    
+</style>
+<!--MY STYLE SCRIPT ENDED-->
+
+
+<script>
+  window.onload = function() {
+    if (window.jQuery) {
+      let $ = window.jQuery;
+      
+      
+      
+  //My customisation Starts
+      
+      
+  //Calendar day set up for unavailable day pick up
+  var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+  //Setting up Todays date
+  var today = (new Date()).toLocaleDateString();
+  //Formatting date in jQuery format (East EU)
+  var today = new Date();
+  var tomorrow = new Date();
+  var dd = today.getDate();
+  var dd1 = tomorrow.getDate()+1;
+  var mm = today.getMonth()+1;
+  var yyyy = today.getFullYear();
+  if(dd<10)
+  {
+      dd='0'+dd;
+  }
+  if(dd1<10)
+  {
+      dd1='0'+dd1;
+  }
+  if(mm<10)
+  {
+      mm='0'+mm;
+  }
+      
+      
+    //Getting Todays and Tomorrows dates into format "2020/01/01" that Jquery will read
+  today = yyyy+'/'+mm+'/'+dd;
+  tomorrow = yyyy+'/'+mm+'/'+dd1;
+
+      
+
+  // Add Dates, in which delivery is unavailable. Add with brackets in the format bellow. dont forget to separate all dates with comma
+      var Holidays = ["2021/11/16","2021/11/17","2021/11/18","2021/11/23","2021/11/24","2021/11/25","2021/11/30",
+                      "2021/12/01","2021/12/02","2021/12/07","2021/12/08","2021/12/09","2021/12/14","2021/12/15","2021/12/16","2021/12/28","2021/12/29",
+                      "2022/01/04","2022/01/05","2022/01/06","2022/01/11","2022/01/12","2022/01/13","2022/01/18","2022/01/19","2022/01/20","2022/01/25","2022/01/26","2022/01/27"]
+
+      
+
+
+
+
+// Code for Tomorrow and after tomorrow unavailable delivery
+  var unavailableDates = [today,tomorrow]; // yyyy/MM/dd
+  var unavailableDays = ["Monday","Friday","Saturday","Sunday"];
+
+
+  //Code for Weekends+Monday unavailable delivery
+  function unavailable(date) {
+      ymd = date.getFullYear() + "/" + ("0"+(date.getMonth()+1)).slice(-2) + "/" + ("0"+date.getDate()).slice(-2);
+      day = new Date(ymd).getDay();
+      if ($.inArray(ymd, unavailableDates) < 0 && $.inArray(days[day], unavailableDays) < 0 && $.inArray(ymd, Holidays) < 0) {
+          return [true, "enabled", "Book Now"];
+      } else {
+          return [false,"disabled","Booked Out"];
+      }
+  }
+      
+  //End of My Customisation
+      
+      
+      
+  //Code runner
+      $(function() {
+        $("#date").datepicker({
+          minDate: new Date(), 
+          maxDate: '+2M',
+          dateFormat: "dd/mm/yy",
+          beforeShowDay: unavailable
+        });
+      });
+      
+      
+      
+    }
+  }
+</script>
